@@ -19,10 +19,14 @@ jobs:
         node-version: 20
 
     - name: Install Dependencies
-      run: npm install
+      run: |
+        cd project-1-s3-react
+        npm install
 
     - name: Build Project
-      run: npm run build
+      run: |
+        cd project-1-s3-react
+        npm run build
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
@@ -32,4 +36,4 @@ jobs:
         aws-region: ap-south-2
 
     - name: Deploy to S3
-      run: aws s3 sync dist/ s3://react-project1-sai --delete
+      run: aws s3 sync project-1-s3-react/dist/ s3://react-project1-sai --delete
