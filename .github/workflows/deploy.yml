@@ -1,46 +1,59 @@
 name: Deploy React App to S3
 
 on:
-  push:
-    branches:
-      - master
+push:
+branches:
+- master
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+deploy:
+runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
+```
+steps:
+- name: Checkout Code
+  uses: actions/checkout@v4
 
-    - name: Setup Node
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
+- name: Setup Node
+  uses: actions/setup-node@v4
+  with:
+    node-version: 20
 
-    - name: Install Dependencies
-      run: |
-        cd project-1-s3-react
-        npm install
+- name: Install Dependencies
+  run: |
+    cd project-1-s3-react
+    npm install
 
-    - name: Build Project
-      run: |
-        cd project-1-s3-react
-        npm run build
+- name: Run Unit Tests
+  run: |
+    cd project-1-s3-react
+    npm test
 
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ap-south-2
+- name: Snyk Security Scan
+  uses: snyk/actions/node@master
+  env:
+    SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+  with:
+    args: --severity-threshold=high
 
+- name: Build Project
+  run: |
+    cd project-1-s3-react
+    npm run build
 
-    - name: Deploy to S3
-      run: aws s3 sync project-1-s3-react/dist/ s3://react-project1-sai --delete
+- name: Configure AWS Credentials
+  uses: aws-actions/configure-aws-credentials@v4
+  with:
+    aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    aws-region: ap-south-2
 
-    - name: Invalidate CloudFront Cache
-      run: |
-        aws cloudfront create-invalidation \
-        --distribution-id EKFP19KR5TQY6 \
-        --paths "/*"
+- name: Deploy to S3
+  run: aws s3 sync project-1-s3-react/dist/ s3://react-project1-sai --delete
+
+- name: Invalidate CloudFront Cache
+  run: |
+    aws cloudfront create-invalidation \
+    --distribution-id EKFP19KR5TQY6 \
+    --paths "/*"
+```
