@@ -9,7 +9,6 @@ jobs:
 deploy:
 runs-on: ubuntu-latest
 
-```
 steps:
 - name: Checkout Code
   uses: actions/checkout@v4
@@ -56,4 +55,4 @@ steps:
     aws cloudfront create-invalidation \
     --distribution-id EKFP19KR5TQY6 \
     --paths "/*"
-```
+
