@@ -35,6 +35,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ap-south-2
 
+
     - name: Deploy to S3
       run: aws s3 sync project-1-s3-react/dist/ s3://react-project1-sai --delete
 
